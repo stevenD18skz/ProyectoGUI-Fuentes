@@ -13,6 +13,7 @@ result = instance.solve()
 # Output the array q
 print("oaw")
 
+
 # Procesar y mostrar los resultados
 """ if result.success:
     print("Solución encontrada:")
