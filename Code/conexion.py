@@ -1,23 +1,21 @@
 from minizinc import Instance, Model, Solver
 
-# Load n-Queens model from file
-model = Model("././modelo1.mzn")
-model.add_file("././prueba1.dzn")
+# Cargar el modelo de MiniZinc
+model = Model("modelo1.mzn")
+model.add_file("prueba1.dzn")
 
-# Find the MiniZinc solver configuration for Gecode
+# Configurar el solver de MiniZinc, en este caso, Gecode
 gecode = Solver.lookup("gecode")
-# Create an Instance of the n-Queens model for Gecode
+
+# Crear una instancia del modelo con el solver configurado
 instance = Instance(gecode, model)
 
+# Resolver el problema
 result = instance.solve()
-# Output the array q
-print("oaw")
 
-
-# Procesar y mostrar los resultados
-""" if result.success:
+# Verificar si se encontró una solución
+if result.solution is not None:
     print("Solución encontrada:")
-    for solution in result.solutions:
-        print(solution)  # Muestra cada variable de la solución
+    print(result)
 else:
-    print("No se encontró solución.") """
+    print("No se encontró solución.")
