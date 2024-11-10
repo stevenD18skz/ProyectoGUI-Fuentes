@@ -1,21 +1,34 @@
 from minizinc import Instance, Model, Solver
 
-# Cargar el modelo de MiniZinc
-model = Model("modelo1.mzn")
-model.add_file("prueba1.dzn")
+class MiniZincSolver:
+    def __init__(self, model_file: str, data_file: str, solver_name: str = "gecode"):
+        self.model_file = model_file
+        self.data_file = data_file
+        self.solver_name = solver_name
+        self.model = None
+        self.instance = None
+        self.result = None
 
-# Configurar el solver de MiniZinc, en este caso, Gecode
-gecode = Solver.lookup("gecode")
+    def load_model(self):
+        # Cargar el modelo de MiniZinc y el archivo de datos
+        self.model = Model(self.model_file)
+        self.model.add_file(self.data_file)
 
-# Crear una instancia del modelo con el solver configurado
-instance = Instance(gecode, model)
+    def configure_solver(self):
+        # Configurar el solver de MiniZinc
+        solver = Solver.lookup(self.solver_name)
+        if solver is None:
+            raise ValueError(f"Solver '{self.solver_name}' no encontrado.")
+        self.instance = Instance(solver, self.model)
 
-# Resolver el problema
-result = instance.solve()
+    def solve(self):
+        # Resolver el problema y almacenar el resultado
+        self.result = self.instance.solve()
+        return self.result
 
-# Verificar si se encontró una solución
-if result.solution is not None:
-    print("Solución encontrada:")
-    print(result)
-else:
-    print("No se encontró solución.")
+    def get_solution(self):
+        # Verificar si se encontró una solución y devolverla
+        if self.result and self.result.solution is not None:
+            return self.result
+        else:
+            return "No se encontró solución."

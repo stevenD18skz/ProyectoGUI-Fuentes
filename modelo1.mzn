@@ -1,19 +1,22 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% INICIAR EL PROBLEMA %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-int: n; % cantidad de personas
+int: n = 14; % cantidad de personas
 
-int: m;  % Cantidad de opiniones
+int: m = 3;  % Cantidad de opiniones
 
-array[1..m] of int: opiniones_iniciales;  % Distribución de personas en cada opinión inicial
+array[1..m] of int: opiniones_iniciales = [12, 1, 1];  % Distribución de personas en cada opinión inicial
 
-array[1..m] of float: valores_opiniones;            % lista de float: lista de m valores correspondiente al valor de cada posible opinión 
+array[1..m] of float: valores_opiniones = [3, 6, 1];            % lista de float: lista de m valores correspondiente al valor de cada posible opinión 
 
-array[1..m] of float: costos_extras;
 
-array[1..m, 1..m] of int: costos_desplazamiento;
+array[1..m, 1..m] of int: costos_desplazamiento = 
+    array2d(1..m, 1..m, 
+    [ 0, 2, 4,
+      1, 0, 3,
+      3, 2, 0]);
       
-int: ct;                                          % float: costo total máximo permitido
+int: ct = 20;                                          % float: costo total máximo permitido
 
-int: maxMovs;                                       % entero: máximo de movimientos
+int: maxMovs = 18;                                       % entero: máximo de movimientos
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% INICIAR LA MATRIZ DE MOVIMIENTOS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -29,7 +32,7 @@ constraint
 % Restricción para el costo total de movimientos en toda la matriz
 constraint
     sum(i in 1..m, j in 1..m) (movimientos[i, j] * costos_desplazamiento[i, j]) <= ct /\  % Limitar el costo total de movimientos en toda la matriz
-    sum(i in 1..m, j in 1..m) (movimientos[i, j]) <= maxMovs;  % Limitar la suma total de la matriz de movimientos
+    sum(i in 1..m, j in 1..m) (movimientos[i, j] * abs(i - j)) <= maxMovs;  % Limitar la suma total de la matriz de movimientos
     
 
 
@@ -52,40 +55,41 @@ array[1..m] of var int: opiniones_nuevas = [opiniones_iniciales[i] - suma_filas[
 % SACAR DISTRIBUCION
 array[1..n] of var float: expandir;
 
-% Variable auxiliar para llevar el índice acumulado de la opinión
-array[1..m] of var int: acumulado;  % Para cada i, acumulado[i] será el índice de la primera persona de ese grupo
 
-% Restricción de asignación de valores
+% SACAR DISTRIBUCION
 constraint
-  acumulado[1] = 1 /\  % El primer grupo comienza en la persona 1
-  forall(i in 2..m) (
-    acumulado[i] = acumulado[i-1] + opiniones_nuevas[i-1]  % Se calcula el inicio de la siguiente opinión
-  ) /\  
   forall(i in 1..m, j in 1..opiniones_nuevas[i]) (
-    expandir[acumulado[i] + j - 1] = valores_opiniones[i]
+    expandir[sum(opiniones_nuevas[1..i-1]) + j] = valores_opiniones[i]
   );
 
 
+array[1..m] of float: valores_opiniones_ordenados = sort(valores_opiniones);
 
 int: mitad = n div 2 + 1;
-
-var 1..m: k = 1;
-
-var int: cuenta_menores_5 = sum(i in 1..n) (if expandir[i] <= valores_opiniones[k] then 1 else 0 endif);
-var bool: v = cuenta_menores_5 >= mitad; 
-var float: mediana = if v then valores_opiniones[k] else 0 endif;
-
-constraint v == true;
+array[1..m] of var int: cuenta_menores = [sum(i in 1..n) (if expandir[i] <= valores_opiniones_ordenados[j] then 1 else 0 endif) | j in 1..m]; 
 
 
+var 1..m: indice_median;
 
-var float: mediana_valores_opiniones = 0; %aqui toca calcular la mediana con los valores de lo que da la matriz "opiniones_nuevas"
+constraint
+  % Encuentra el primer índice donde cuenta_menores[j] >= mitad
+  exists(j in 1..m) (
+    cuenta_menores[j] >= mitad /\ indice_median = j /\
+    forall(k in 1..j-1) (cuenta_menores[k] < mitad)
+  );
+
+var float: median = valores_opiniones_ordenados[indice_median];
+
+% Definir la mediana 
+var float: mediana = 0;
+
+
 % =============================================================================================================
 
 
 
 % Calculamos el valor de Pol(p, v) según la fórmula
-var float: Pol = sum(i in 1..m)(opiniones_nuevas[i] * abs(valores_opiniones[i] - mediana));
+var float: Pol = sum(i in 1..m) (opiniones_nuevas[i] * abs(valores_opiniones[i] - mediana));
  
 
 solve minimize Pol;
@@ -97,8 +101,14 @@ output [
     show(opiniones_nuevas), "\n",
     show(valores_opiniones), "\n",
     "costo: ", show(sum(i in 1..m, j in 1..m) (movimientos[i, j] * costos_desplazamiento[i, j])), "\n",
-    "movimientos: ", show(sum(i in 1..m, j in 1..m) (movimientos[i, j])), "\n",
-    show(Pol), "\n\n\n",
+    "movimientos: ", show(sum(i in 1..m, j in 1..m) (movimientos[i, j] * abs(i - j))), "\n",
+    "POL", show(Pol), "\n\n\n",
     show(expandir), "\n",
-    show(mediana), "\n"
+    show(valores_opiniones_ordenados), "\n",
+    show(cuenta_menores), "\n",
+    show(indice_median), "\n",
+    "MEDIANA HP ", show(median), "\n"
 ];
+
+
+
