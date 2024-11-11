@@ -122,7 +122,7 @@ valores_buenos = [
 ]
 
 
-for i in range(5, 6):
+for i in range(1, 31):
     crear_archivo_dzn(f'C:/Users/braya/Desktop/PROYECOTS/ProyectoGUI-Fuentes/batería/MinPol{i}.mpl')
     print("\n\nresolviendo......")
     
