@@ -90,7 +90,8 @@ var float: median = valores_opiniones_ordenados[indice_median];
 %=============================================================================================================
 % Calculamos el valor de Pol(p, v) según la fórmula
 var float: Pol = sum(i in 1..m) (opiniones_nuevas[i] * abs(valores_opiniones[i] - median));
- 
+
+
 solve minimize Pol;
 
 output [
