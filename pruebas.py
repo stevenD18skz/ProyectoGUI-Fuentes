@@ -45,11 +45,86 @@ def crear_archivo_dzn(nombre_archivo):
     with open("DatosProyecto.dzn", "w") as archivo_dzn:
         archivo_dzn.write(contenido_dzn)
 
+validas = [1,4,6,7,8,10,14,15,16,17,19,21,22,23,24,25,28,29,]
 
 
-for i in range(1, 2):
+
+valores_malos = [
+0.09,
+0.000,
+-1,
+0.000,
+1.751,
+0.005,
+3.085,
+5.675,
+5.373,
+9.686,
+15.596,
+5.865,
+28.909,
+-1,
+10.313,
+18.786,
+15.699,
+22.216,
+20.04,
+23.824,
+31.848,
+-1,
+7.876,
+-1,
+28.034,
+30.943,
+25.021,
+18.903,
+36.25,
+0
+]
+
+
+
+valores_buenos = [
+0.09,
+0.000,
+0.000,
+0.000,
+0.482,
+0.003,
+3.085,
+4.323,
+5.373,
+9.686,
+10.349,
+3.721,
+12.417,
+6.549,
+10.313,
+18.786,
+14.171,
+17.897,
+19.603,
+23.566,
+24.175,
+31.135,
+3.822,
+29.902,
+24.775,
+30.748,
+25.021,
+14.683,
+29.999,
+0
+
+
+
+
+]
+
+
+for i in range(5, 6):
     crear_archivo_dzn(f'C:/Users/braya/Desktop/PROYECOTS/ProyectoGUI-Fuentes/batería/MinPol{i}.mpl')
-    print("resolviendo.....\n\n")
+    print("\n\nresolviendo......")
     
     start_time = time.time()
 
@@ -59,18 +134,13 @@ for i in range(1, 2):
     solver.load_model()
     solver.configure_solver()
     result = solver.solve()
-    print(solver.get_solution())
+    print(f" {"✅✅✅" if i in validas else "⭕⭕⭕"} {i} ===> {solver.get_solution()}")
+    print(f"            mala {valores_malos[i-1]} ==== buenos {valores_buenos[i-1]}")
 
 
     end_time = time.time()
     elapsed_time = end_time - start_time
-    print(f"Tiempo transcurrido: {elapsed_time} segundos")
-
-
-
-
-
-#mover una persona de la opinion(i) a la opinio(j) es |i-j|
+    print(f"Tiempo transcurrido: {elapsed_time:2f} segundos")
 
 
 

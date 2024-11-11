@@ -1,20 +1,32 @@
 import numpy as np
+from itertools import product
 
 # Lista de ejemplo
-p = np.array([1, 1, 1, 1, 1])
-v = np.array([0.109, 0.391, 0.481, 0.789, 0.976])
+v = np.array([0.011,0.214,0.29,0.829,0.944])
 
+# Generar todas las combinaciones de p que suman 5
+def generate_combinations(n, total):
+    return [comb for comb in product(range(total + 1), repeat=n) if sum(comb) == total]
 
-lista = np.repeat(v, p)
-mediana = np.median(lista)
+# Función para calcular POL
+def calculate_pol(p, v):
+    lista = np.repeat(v, p)
+    mediana = np.median(lista)
+    return np.sum(p * np.abs(v - mediana))
 
+# Generar combinaciones para p
+combinations = generate_combinations(len(v), 10)
 
-pol = np.sum(p * np.abs(v - mediana))
+# Calcular y mostrar el POL para cada combinación de p
+for p in combinations:
+    p_array = np.array(p)
+    pol = calculate_pol(p_array, v)
+    print(f"p: {p_array} -> POL: {pol}")
 
-
-
-print(f"POL {pol}")
-
+"""
+p: [0 4 1 0 0] -> POL: 0.08999999999999997
+p: [0 1 4 0 0] -> POL: 0.08999999999999997
+"""
 """
 pol = 0.09
 DatosProyecto1": {
