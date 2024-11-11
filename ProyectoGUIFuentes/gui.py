@@ -1,6 +1,8 @@
+import time
 import tkinter as tk
 from tkinter import messagebox, filedialog
-import subprocess
+
+from conexion import MiniZincSolver
 
 class MiniZincConfigurator:
     def __init__(self, root):
@@ -100,7 +102,7 @@ class MiniZincConfigurator:
         contenido_dzn += f"maxMovs = {maxMovs};\n"
         
         # Guardar en el archivo DatosProyecto.dzn
-        with open("DatosProyecto.dzn", "w") as archivo_dzn:
+        with open("ProyectoGUIFuentes/DatosProyecto.dzn", "w") as archivo_dzn:
             archivo_dzn.write(contenido_dzn)
         
         messagebox.showinfo("Archivo DZN", "Archivo DatosProyecto.dzn creado exitosamente")
@@ -109,15 +111,21 @@ class MiniZincConfigurator:
 
     def ejecutar_modelo(self):
         try:
-            # Comando para ejecutar MiniZinc
-            resultado = subprocess.check_output(
-                ["minizinc", "modelo1.mzn", "DatosProyecto.dzn"],
-                universal_newlines=True
-            )
-            
+            print(f"\n\nresolviendo:......")
+    
+            start_time = time.time()
+
+            solver = MiniZincSolver("Proyecto.mzn", "ProyectoGUIFuentes/DatosProyecto.dzn")
+            solver.load_model()
+            solver.configure_solver()
+            result = solver.solve()
+            end_time = time.time()
+            elapsed_time = end_time - start_time
+            print(f"Tiempo transcurrido: {elapsed_time:2f} segundos")
+                    
             # Mostrar los resultados en la interfaz
             self.salida_texto.delete("1.0", tk.END)
-            self.salida_texto.insert(tk.END, resultado)
+            self.salida_texto.insert(tk.END, result)
             
         except Exception as e:
             messagebox.showerror("Error", f"Error al ejecutar el modelo: {e}")
