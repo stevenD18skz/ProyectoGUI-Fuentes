@@ -137,9 +137,6 @@ class InterfazMPL:
             messagebox.showerror("Error", f"Error al cargar el archivo: {e}")
 
     def crear_archivo_dzn(self):
-        nombre_archivo = filedialog.asksaveasfilename(defaultextension=".dzn", filetypes=[("DZN files", "*.dzn")])
-        if not nombre_archivo:
-            return
 
         # Obtener datos de la interfaz
         n = int(self.entry_personas.get())
@@ -172,7 +169,7 @@ class InterfazMPL:
         contenido_dzn += f"maxMovs = {max_movs};\n"
 
         # Guardar el archivo .dzn
-        with open(nombre_archivo, "w") as archivo_dzn:
+        with open("ProyectoGUIFuentes/DatosProyecto.dzn", "w") as archivo_dzn:
             archivo_dzn.write(contenido_dzn)
         
         messagebox.showinfo("Archivo DZN", "Archivo .dzn creado exitosamente")
