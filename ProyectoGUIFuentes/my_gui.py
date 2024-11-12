@@ -77,9 +77,30 @@ class InterfazMPL:
         self.btn_Ejecutar = ctk.CTkButton(self.root, text="Ejecutar modelo", command=self.ejecutar_modelo)
         self.btn_Ejecutar.place(x=500, y=260)
 
-        # Textbox para salida de mensajes
-        self.textbox_output = ctk.CTkTextbox(master=self.root, width=490, height=170)
-        self.textbox_output.place(x=150, y=300)
+        self.label_polarización = ctk.CTkLabel(master=self.root, text="Polarizacion final")
+        self.label_polarización.place(x=50, y=300)
+        self.entry_polarización = ctk.CTkEntry(master=self.root, width=100)
+        self.entry_polarización.place(x=190, y=300)
+
+        self.label_distribucion = ctk.CTkLabel(master=self.root, text="Movimientos totales")
+        self.label_distribucion.place(x=50, y=340)
+        self.entry_distribucion = ctk.CTkEntry(master=self.root, width=100)
+        self.entry_distribucion.place(x=190, y=340)
+
+        self.label_costo_final = ctk.CTkLabel(master=self.root, text="Costo utilizado")
+        self.label_costo_final.place(x=50, y=380)
+        self.entry_costo_final = ctk.CTkEntry(master=self.root, width=100)
+        self.entry_costo_final.place(x=190, y=380)
+
+        self.label_movs_final = ctk.CTkLabel(master=self.root, text="Distribucion final")
+        self.label_movs_final.place(x=50, y=420)
+        self.entry_movs_final = ctk.CTkEntry(master=self.root, width=200)
+        self.entry_movs_final.place(x=190, y=420)
+
+        self.label_matriz_final = ctk.CTkLabel(master=self.root, text="Matriz de movimientos")
+        self.label_matriz_final.place(x=315, y=300)
+        self.textbox_matriz_final = ctk.CTkTextbox(master=self.root, width=300, height=150)
+        self.textbox_matriz_final.place(x=450, y=300)
 
     def ver_matriz(self):
         # Crear una nueva ventana para mostrar la matriz de desplazamiento
@@ -196,20 +217,34 @@ class InterfazMPL:
             end_time = time.time()
             elapsed_time = end_time - start_time
 
+            # Convertir el resultado en un diccionario
             dividir = str(result).split("\n")
-
             diccionario_resultado = {}
 
             for linea in dividir:
-                clave, valor = linea.split(": ", 1)  # Divide en clave y valor usando ": " como separador
-                # Convertir el valor a su tipo correspondiente si es posible (float, int, lista, etc.)
-                if valor.startswith("[") and valor.endswith("]"):
-                    valor = eval(valor)  # Convierte la cadena de lista a lista real (usa con precaución)
-                elif valor.replace('.', '', 1).isdigit():
-                    valor = float(valor) if '.' in valor else int(valor)
-                diccionario_resultado[clave] = valor
+                if ": " in linea:  # Verificar que la línea contenga el separador ": "
+                    clave, valor = linea.split(": ", 1)  # Divide en clave y valor usando ": " como separador
+                    # Convertir el valor a su tipo correspondiente si es posible (float, int, lista, etc.)
+                    if valor.startswith("[") and valor.endswith("]"):
+                        valor = eval(valor)  # Convierte la cadena de lista a lista real (usa con precaución)
+                    elif valor.replace('.', '', 1).isdigit():
+                        valor = float(valor) if '.' in valor else int(valor)
+                    diccionario_resultado[clave] = valor
 
-            # Imprimir el diccionario final
+            # Llenar los entrys del output con los valores del diccionario
+            self.entry_polarización.insert(0, diccionario_resultado.get("POL", ""))
+            self.entry_distribucion.insert(0, diccionario_resultado.get("Movimientos", ""))
+            self.entry_costo_final.insert(0, diccionario_resultado.get("Costo", ""))
+            self.entry_movs_final.insert(0, diccionario_resultado.get("Nueva distribuccion de personas", ""))
+            
+            # Llenar el textbox de la matriz final
+            matriz_movimientos = diccionario_resultado.get("Matriz de movimientos", [])
+            if isinstance(matriz_movimientos, list):
+                # Convertir la lista en una cadena formateada y agregar al textbox
+                matriz_texto = "\n".join(str(matriz_movimientos[i:i+5]) for i in range(0, len(matriz_movimientos), 5))
+                self.textbox_matriz_final.insert("1.0", matriz_texto)
+
+            # Mostrar el diccionario en la consola para verificar
             print(diccionario_resultado)
 
             """
