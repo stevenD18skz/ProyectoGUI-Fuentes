@@ -11,6 +11,8 @@ class InterfazMPL:
         self.configurar_ventana()
         self.crear_elementos()
 
+        self.diccionario_resultado = {'POL': 0.08999999999999997, 'Matriz de movimientos': [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0], 'Nueva distribuccion de personas': [0, 1, 4, 0, 0], 'Costo': 5.499, 'Movimientos': 5}
+
         
     def configurar_ventana(self):
         ctk.set_appearance_mode("System")
@@ -245,6 +247,8 @@ class InterfazMPL:
         
         except Exception as e:
             messagebox.showerror("Error", f"Error al ejecutar el modelo: {e}")
+
+
 
 # Ejecutar la aplicación
 if __name__ == "__main__":
