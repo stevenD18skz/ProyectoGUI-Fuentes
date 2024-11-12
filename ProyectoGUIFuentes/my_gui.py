@@ -194,10 +194,54 @@ class InterfazMPL:
             end_time = time.time()
             elapsed_time = end_time - start_time
 
+            dividir = str(result).split("\n")
+
+            diccionario_resultado = {}
+
+            for linea in dividir:
+                clave, valor = linea.split(": ", 1)  # Divide en clave y valor usando ": " como separador
+                # Convertir el valor a su tipo correspondiente si es posible (float, int, lista, etc.)
+                if valor.startswith("[") and valor.endswith("]"):
+                    valor = eval(valor)  # Convierte la cadena de lista a lista real (usa con precaución)
+                elif valor.replace('.', '', 1).isdigit():
+                    valor = float(valor) if '.' in valor else int(valor)
+                diccionario_resultado[clave] = valor
+
+            # Imprimir el diccionario final
+            print(diccionario_resultado)
+
+            """
+            {'POL': 0.08999999999999997, 'Matriz de movimientos': [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0], 'Nueva distribuccion de personas': [0, 1, 4, 0, 0], 'Costo': 5.499, 'Movimientos': 5}
+            diccionario_resultado['Matriz de movimientos']
+            """
+
+
+
+
             # Mostrar el tiempo de ejecución y resultados en la interfaz
             self.textbox_output.delete("1.0", END)
             self.textbox_output.insert(END, f"Tiempo transcurrido: {elapsed_time:.2f} segundos\n")
             self.textbox_output.insert(END, str(result))
+
+
+            """
+            -> la polarizacion
+            -> la matriz de movimientos
+            -> la nueva distribuccion de personas
+            -> costo
+            -> movimientos
+            -> extra (explicacion matriz)
+
+            output [
+                "POL: ", show(Pol),
+                "\nMatriz de movimientos", show(movimientos),
+                "\nNueva distribuccion de personas", show(opiniones_nuevas),
+                "\nCosto", show(sum(i in 1..m, j in 1..m) (movimientos[i, j] * costos_desplazamiento[i, j])),
+                "\nMovimientos", show(sum(i in 1..m, j in 1..m) (movimientos[i, j] * abs(i - j))),
+            ];
+
+
+            """
         
         except Exception as e:
             messagebox.showerror("Error", f"Error al ejecutar el modelo: {e}")

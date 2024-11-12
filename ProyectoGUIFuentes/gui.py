@@ -114,7 +114,7 @@ class MiniZincConfigurator:
             print(f"\n\nresolviendo:......")
     
             start_time = time.time()
-
+            
             solver = MiniZincSolver("Proyecto.mzn", "ProyectoGUIFuentes/DatosProyecto.dzn")
             solver.load_model()
             solver.configure_solver()

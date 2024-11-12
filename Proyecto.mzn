@@ -95,18 +95,11 @@ var float: Pol = sum(i in 1..m) (opiniones_nuevas[i] * abs(valores_opiniones[i] 
 solve minimize Pol;
 
 output [
-    %show(opiniones_iniciales), "\n",
-    %show(movimientos), "\n===\n",
-    %show(opiniones_nuevas), "\n",
-    %show(valores_opiniones), "\n",
-    %"costo: ", show(sum(i in 1..m, j in 1..m) (movimientos[i, j] * costos_desplazamiento[i, j])), "\n",
-    %"movimientos: ", show(sum(i in 1..m, j in 1..m) (movimientos[i, j] * abs(i - j))), "\n",
     "POL: ", show(Pol),
-    %show(expandir), "\n",
-    %show(valores_opiniones_ordenados), "\n",
-    %show(cuenta_menores), "\n",
-    %show(indice_median), "\n",
-    %"MEDIANA HP ", show(median), "\n"
+    "\nMatriz de movimientos: ", show(movimientos),
+    "\nNueva distribuccion de personas: ", show(opiniones_nuevas),
+    "\nCosto: ", show(sum(i in 1..m, j in 1..m) (movimientos[i, j] * costos_desplazamiento[i, j])),
+    "\nMovimientos: ", show(sum(i in 1..m, j in 1..m) (movimientos[i, j] * abs(i - j))),
 ];
 
 
