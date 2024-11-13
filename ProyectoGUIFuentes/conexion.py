@@ -1,6 +1,5 @@
 from minizinc import Instance, Model, Solver
 import gurobipy as gp
-print(gp.gurobi.version())
 
 
 class MiniZincSolver:
