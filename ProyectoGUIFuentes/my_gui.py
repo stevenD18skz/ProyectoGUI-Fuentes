@@ -11,7 +11,10 @@ class InterfazMPL:
         self.configurar_ventana()
         self.crear_elementos()
 
-        self.diccionario_resultado = {'POL': 0.08999999999999997, 'Matriz de movimientos': [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0], 'Nueva distribuccion de personas': [0, 1, 4, 0, 0], 'Costo': 5.499, 'Movimientos': 5}
+        # Inicializar los botones y outputs en sus estados
+        self.btn_Cargar.configure(state="normal")
+        self.btn_Crear.configure(state="disabled")
+        self.btn_Ejecutar.configure(state="disabled")
 
         
     def configurar_ventana(self):
@@ -79,22 +82,22 @@ class InterfazMPL:
 
         self.label_polarización = ctk.CTkLabel(master=self.root, text="Polarizacion final")
         self.label_polarización.place(x=50, y=300)
-        self.entry_polarización = ctk.CTkEntry(master=self.root, width=100)
+        self.entry_polarización = ctk.CTkEntry(master=self.root, width=100, state="readonly")
         self.entry_polarización.place(x=190, y=300)
 
         self.label_distribucion = ctk.CTkLabel(master=self.root, text="Movimientos totales")
         self.label_distribucion.place(x=50, y=340)
-        self.entry_distribucion = ctk.CTkEntry(master=self.root, width=100)
+        self.entry_distribucion = ctk.CTkEntry(master=self.root, width=100, state="readonly")
         self.entry_distribucion.place(x=190, y=340)
 
         self.label_costo_final = ctk.CTkLabel(master=self.root, text="Costo utilizado")
         self.label_costo_final.place(x=50, y=380)
-        self.entry_costo_final = ctk.CTkEntry(master=self.root, width=100)
+        self.entry_costo_final = ctk.CTkEntry(master=self.root, width=100, state="readonly")
         self.entry_costo_final.place(x=190, y=380)
 
         self.label_movs_final = ctk.CTkLabel(master=self.root, text="Distribucion final")
         self.label_movs_final.place(x=50, y=420)
-        self.entry_movs_final = ctk.CTkEntry(master=self.root, width=200)
+        self.entry_movs_final = ctk.CTkEntry(master=self.root, width=200, state="readonly")
         self.entry_movs_final.place(x=190, y=420)
 
         self.label_matriz_final = ctk.CTkLabel(master=self.root, text="Matriz de movimientos")
@@ -115,6 +118,18 @@ class InterfazMPL:
         # Agregar la matriz de desplazamiento (esto debe ser cargado desde el archivo previamente)
         matriz_texto.insert(END, self.textbox_costo_desplazamiento.get("1.0", END))
         matriz_texto.config(state=DISABLED)  # Para evitar edición de la matriz
+
+
+    # Método para habilitar botones en orden secuencial
+    def habilitar_boton(self, boton):
+        if boton == "crear":
+            self.btn_Crear.configure(state="normal")
+        elif boton == "ejecutar":
+            self.btn_Ejecutar.configure(state="normal")
+        elif boton == "reiniciar":
+            self.btn_Cargar.configure(state="normal")
+            self.btn_Crear.configure(state="disabled")
+            self.btn_Ejecutar.configure(state="disabled")
 
     def cargar_archivo(self):
         # Abre un cuadro de diálogo para seleccionar el archivo .mpl
@@ -155,6 +170,7 @@ class InterfazMPL:
                 
                 # Mostrar mensaje de éxito
                 messagebox.showinfo("Éxito", "El archivo se cargó correctamente.")
+                self.habilitar_boton("crear")  # Habilitar botón de crear archivo DZN
         except Exception as e:
             # Si ocurre algún error, muestra un mensaje de error
             messagebox.showerror("Error", f"Error al cargar el archivo: {e}")
@@ -196,6 +212,7 @@ class InterfazMPL:
             archivo_dzn.write(contenido_dzn)
         
         messagebox.showinfo("Archivo DZN", "Archivo .dzn creado exitosamente")
+        self.habilitar_boton("ejecutar")  # Habilitar botón de ejecutar modelo
 
 
     def ejecutar_modelo(self):
@@ -232,10 +249,25 @@ class InterfazMPL:
                     diccionario_resultado[clave] = valor
 
             # Llenar los entrys del output con los valores del diccionario
-            self.entry_polarización.insert(0, diccionario_resultado.get("POL", ""))
-            self.entry_distribucion.insert(0, diccionario_resultado.get("Movimientos", ""))
+            self.entry_polarización.configure(state="normal")
+            self.entry_polarización.delete(0, END)
+            self.entry_polarización.insert(0, self.diccionario_resultado.get("POL", ""))
+            self.entry_polarización.configure(state="readonly")
+
+            self.entry_distribucion.configure(state="normal")
+            self.entry_distribucion.delete(0, END)
+            self.entry_distribucion.insert(0, self.diccionario_resultado.get("Movimientos", ""))
+            self.entry_distribucion.configure(state="readonly")
+
+            self.entry_costo_final.configure(state="normal")
+            self.entry_costo_final.delete(0, END)
             self.entry_costo_final.insert(0, diccionario_resultado.get("Costo", ""))
+            self.entry_costo_final.configure(state="readonly")
+
+            self.entry_movs_final.configure(state="normal")
+            self.entry_movs_final.delete(0, END)
             self.entry_movs_final.insert(0, diccionario_resultado.get("Nueva distribuccion de personas", ""))
+            self.entry_movs_final.configure(state="readonly")
             
             # Llenar el textbox de la matriz final
             matriz_movimientos = diccionario_resultado.get("Matriz de movimientos", [])
@@ -246,39 +278,9 @@ class InterfazMPL:
 
             # Mostrar el diccionario en la consola para verificar
             print(diccionario_resultado)
+            messagebox.showinfo("Ejecución", "Modelo ejecutado correctamente")
+            self.habilitar_boton("reiniciar")  # Reinicia el flujo habilitando solo el botón de cargar archivo
 
-            """
-            {'POL': 0.08999999999999997, 'Matriz de movimientos': [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0], 'Nueva distribuccion de personas': [0, 1, 4, 0, 0], 'Costo': 5.499, 'Movimientos': 5}
-            diccionario_resultado['Matriz de movimientos']
-            """
-
-
-
-
-            # Mostrar el tiempo de ejecución y resultados en la interfaz
-            self.textbox_output.delete("1.0", END)
-            self.textbox_output.insert(END, f"Tiempo transcurrido: {elapsed_time:.2f} segundos\n")
-            self.textbox_output.insert(END, str(result))
-
-
-            """
-            -> la polarizacion
-            -> la matriz de movimientos
-            -> la nueva distribuccion de personas
-            -> costo
-            -> movimientos
-            -> extra (explicacion matriz)
-
-            output [
-                "POL: ", show(Pol),
-                "\nMatriz de movimientos", show(movimientos),
-                "\nNueva distribuccion de personas", show(opiniones_nuevas),
-                "\nCosto", show(sum(i in 1..m, j in 1..m) (movimientos[i, j] * costos_desplazamiento[i, j])),
-                "\nMovimientos", show(sum(i in 1..m, j in 1..m) (movimientos[i, j] * abs(i - j))),
-            ];
-
-
-            """
         
         except Exception as e:
             messagebox.showerror("Error", f"Error al ejecutar el modelo: {e}")
