@@ -15,6 +15,7 @@ class InterfazMPL:
         self.btn_Cargar.configure(state="normal")
         self.btn_Crear.configure(state="disabled")
         self.btn_Ejecutar.configure(state="disabled")
+        self.diccionario_resultado = None
 
         
     def configurar_ventana(self):
@@ -269,7 +270,7 @@ class InterfazMPL:
 
             # Convertir el resultado en un diccionario
             dividir = str(result).split("\n")
-            diccionario_resultado = {}
+            self.diccionario_resultado = {}
 
             for linea in dividir:
                 if ": " in linea:  # Verificar que la línea contenga el separador ": "
@@ -279,31 +280,31 @@ class InterfazMPL:
                         valor = eval(valor)  # Convierte la cadena de lista a lista real (usa con precaución)
                     elif valor.replace('.', '', 1).isdigit():
                         valor = float(valor) if '.' in valor else int(valor)
-                    diccionario_resultado[clave] = valor
+                    self.diccionario_resultado[clave] = valor
 
             # Llenar los entrys del output con los valores del diccionario
             self.entry_polarización.configure(state="normal")
             self.entry_polarización.delete(0, END)
-            self.entry_polarización.insert(0, diccionario_resultado.get("POL", ""))
+            self.entry_polarización.insert(0, self.diccionario_resultado.get("POL", ""))
             self.entry_polarización.configure(state="readonly")
 
             self.entry_distribucion.configure(state="normal")
             self.entry_distribucion.delete(0, END)
-            self.entry_distribucion.insert(0, diccionario_resultado.get("Movimientos", ""))
+            self.entry_distribucion.insert(0, self.diccionario_resultado.get("Movimientos", ""))
             self.entry_distribucion.configure(state="readonly")
 
             self.entry_costo_final.configure(state="normal")
             self.entry_costo_final.delete(0, END)
-            self.entry_costo_final.insert(0, diccionario_resultado.get("Costo", ""))
+            self.entry_costo_final.insert(0, self.diccionario_resultado.get("Costo", ""))
             self.entry_costo_final.configure(state="readonly")
 
             self.entry_movs_final.configure(state="normal")
             self.entry_movs_final.delete(0, END)
-            self.entry_movs_final.insert(0, diccionario_resultado.get("Nueva distribuccion de personas", ""))
+            self.entry_movs_final.insert(0, self.diccionario_resultado.get("Nueva distribuccion de personas", ""))
             self.entry_movs_final.configure(state="readonly")
             
             # Llenar el textbox de la matriz final
-            matriz_movimientos = diccionario_resultado.get("Matriz de movimientos", [])
+            matriz_movimientos = self.diccionario_resultado.get("Matriz de movimientos", [])
             if isinstance(matriz_movimientos, list):
                 # Convertir la lista en una cadena formateada y agregar al textbox
                 matriz_texto = "\n".join(str(matriz_movimientos[i:i+5]) for i in range(0, len(matriz_movimientos), 5))
@@ -313,7 +314,7 @@ class InterfazMPL:
 
 
 
-            # Matriz_de_movimientos =  diccionario_resultado.get("Matriz de movimientos", [])
+            # Matriz_de_movimientos =  self.diccionario_resultado.get("Matriz de movimientos", [])
 
             # m = int(len(Matriz_de_movimientos) ** 0.5)
             # matriz_mxm = [Matriz_de_movimientos[i * m:(i + 1) * m] for i in range(m)]
