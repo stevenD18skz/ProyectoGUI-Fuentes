@@ -64,6 +64,10 @@ class InterfazMPL:
         self.btn_ver_matriz = ctk.CTkButton(self.root, text="Ver", command=self.ver_matriz, width=40, height=20)
         self.btn_ver_matriz.place(x=300, y=50)
 
+        self.btn_ver_movs = ctk.CTkButton(self.root, text="Ver Movimientos", command=self.ver_movimientos, width=40, height=30)
+        self.btn_ver_movs.place(x=320, y=330)
+        self.btn_ver_movs.configure(state="disabled")
+
         self.label_costo_opinion = ctk.CTkLabel(master=self.root, text="Costos extra")
         self.label_costo_opinion.place(x=315, y=180)
         self.entry_costo_opinion = ctk.CTkEntry(master=self.root, width=350)
@@ -119,17 +123,46 @@ class InterfazMPL:
         matriz_texto.insert(END, self.textbox_costo_desplazamiento.get("1.0", END))
         matriz_texto.config(state=DISABLED)  # Para evitar edición de la matriz
 
+    def ver_movimientos(self):
+        # Crear una nueva ventana para mostrar la matriz de movimientos
+        movimientos_ventana = Toplevel(self.root)
+        movimientos_ventana.title("Movimientos")
+        movimientos_ventana.geometry("1000x400")
+
+        # Crear un campo de texto para mostrar la matriz en la nueva ventana
+        movimientos_texto = Text(movimientos_ventana, wrap=WORD, width=120, height=20)
+        movimientos_texto.pack(pady=10)
+
+        # Obtener y procesar la matriz de movimientos
+        Movimientos = self.diccionario_resultado.get("Matriz de movimientos", [])
+        m = int(len(Movimientos) ** 0.5)
+        matriz_mxm = [Movimientos[i * m:(i + 1) * m] for i in range(m)]
+
+        # Generar la explicación de los movimientos
+        explicacion = []
+        for i in range(1, m):
+            for j in range(1, m):
+                if matriz_mxm[i][j] == 0:
+                    continue
+                explicacion.append(f"Se ha(n) movido {matriz_mxm[i][j]} persona(s) de la opinión({i}) a la opinión({j})")
+
+        # Mostrar la explicación en el campo de texto
+        movimientos_texto.insert(END, "\n".join(explicacion))
+        movimientos_texto.config(state=DISABLED)  # Para evitar edición de la matriz        
+
 
     # Método para habilitar botones en orden secuencial
     def habilitar_boton(self, boton):
         if boton == "crear":
             self.btn_Crear.configure(state="normal")
+            self.btn_ver_movs.configure(state = "disabled")
         elif boton == "ejecutar":
             self.btn_Ejecutar.configure(state="normal")
         elif boton == "reiniciar":
             self.btn_Cargar.configure(state="normal")
             self.btn_Crear.configure(state="disabled")
             self.btn_Ejecutar.configure(state="disabled")
+            self.btn_ver_movs.configure(state = "normal")
 
     def cargar_archivo(self):
         # Abre un cuadro de diálogo para seleccionar el archivo .mpl
@@ -277,22 +310,25 @@ class InterfazMPL:
                 self.textbox_matriz_final.insert("1.0", matriz_texto)
 
             
-            Matriz_de_movimientos =  diccionario_resultado.get("Matriz de movimientos", [])
 
-            m = int(len(Matriz_de_movimientos) ** 0.5)
-            matriz_mxm = [Matriz_de_movimientos[i * m:(i + 1) * m] for i in range(m)]
 
-            explicacion = []
 
-            for i in range(1, m):
-                for j in range(1, m):
-                    if matriz_mxm[i][j] == 0:
-                        continue
+            # Matriz_de_movimientos =  diccionario_resultado.get("Matriz de movimientos", [])
 
-                    explicacion.append(f"se ah movido {matriz_mxm[i][j]} persona(s) de la opinion({i}) a la opinion({j})")
+            # m = int(len(Matriz_de_movimientos) ** 0.5)
+            # matriz_mxm = [Matriz_de_movimientos[i * m:(i + 1) * m] for i in range(m)]
+
+            # explicacion = []
+
+            # for i in range(1, m):
+            #     for j in range(1, m):
+            #         if matriz_mxm[i][j] == 0:
+            #             continue
+
+            #         explicacion.append(f"se ha(n) movido {matriz_mxm[i][j]} persona(s) de la opinion({i}) a la opinion({j})")
             
             
-            explicacion = "\n".join(explicacion)
+            # explicacion = "\n".join(explicacion)
   
             # Mostrar el diccionario en la consola para verificar 
             messagebox.showinfo("Ejecución", "Modelo ejecutado correctamente")
