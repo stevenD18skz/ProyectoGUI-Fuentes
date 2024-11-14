@@ -176,6 +176,7 @@ class InterfazMPL:
 
 
     def cargar_archivo(self):
+        
         # Abre un cuadro de diálogo para seleccionar el archivo .mpl
         file_path = filedialog.askopenfilename(filetypes=[("MPL files", "*.mpl")])
         if not file_path:
