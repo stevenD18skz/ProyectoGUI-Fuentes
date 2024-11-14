@@ -264,7 +264,7 @@ class InterfazMPL:
         try:
 
             # Configuración del modelo y solución
-            """
+  
             start_time = time.time()
 
             modelo = Model("Proyecto.mzn")
@@ -290,10 +290,10 @@ class InterfazMPL:
                     elif valor.replace('.', '', 1).isdigit():
                         valor = float(valor) if '.' in valor else int(valor)
                     self.diccionario_resultado[clave] = valor
-            """
+          
             
-            time.sleep(5.2)
-            self.diccionario_resultado = {'POL': 0.0, 'Matriz de movimientos': [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'Nueva distribuccion de personas': [0, 0, 0, 0, 0, 0, 0, 0, 0, 5], 'Costo': 8.577, 'Movimientos': 28}
+            #time.sleep(5.2)
+            #self.diccionario_resultado = {'POL': 0.0, 'Matriz de movimientos': [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'Nueva distribuccion de personas': [0, 0, 0, 0, 0, 0, 0, 0, 0, 5], 'Costo': 8.577, 'Movimientos': 28}
 
 
 
