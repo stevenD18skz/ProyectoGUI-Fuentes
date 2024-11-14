@@ -45,3 +45,8 @@ python ProyectoGUIFuentes/main.py
 
 
 3. En la interfaz gráfica, cargue los datos necesarios (disponibles en el directorio DatosProyecto) y ejecute el modelo. Los resultados se mostrarán en la interfaz.
+
+## Dependencias
+
+- tkinter
+- customTkinter
