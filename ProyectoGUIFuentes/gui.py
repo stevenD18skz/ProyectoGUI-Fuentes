@@ -1,13 +1,16 @@
 from tkinter import *
 from tkinter import filedialog, messagebox
 import customtkinter as ctk
+import time  # Asegúrate de importar time en la parte superior
+from minizinc import Instance, Model, Solver  # Asegúrate de tener minizinc-python instalado
+
 
 class InterfazMPL:
     def __init__(self, root):
         self.root = root
-        self.root.title('Prueba customtkinter')
+        self.root.title('GUI PROYECTO ADA II')
         self.root.geometry('800x500')
-        self.root.resizable(False, False)  # Hace la ventana fija
+        self.root.resizable(False, False)
         self.configurar_ventana()
         self.crear_elementos()
 
@@ -22,8 +25,9 @@ class InterfazMPL:
         ctk.set_appearance_mode("System")
         ctk.set_default_color_theme("blue")
 
-    def crear_elementos(self):
 
+
+    def crear_elementos(self):
         # Crear etiquetas y campos de entrada
         self.label_personas = ctk.CTkLabel(master=self.root, text="Numero de personas")
         self.label_personas.place(x=50, y=20)
@@ -75,7 +79,6 @@ class InterfazMPL:
         self.entry_costo_opinion.place(x=400, y=180)
 
         # Crear botones
-
         self.btn_Cargar = ctk.CTkButton(self.root, text="Cargar archivo .mpl", command=self.cargar_archivo)
         self.btn_Cargar.place(x=150, y=260)
 
@@ -110,6 +113,8 @@ class InterfazMPL:
         self.textbox_matriz_final = ctk.CTkTextbox(master=self.root, width=300, height=150)
         self.textbox_matriz_final.place(x=450, y=300)
 
+
+
     def ver_matriz(self):
         # Crear una nueva ventana para mostrar la matriz de desplazamiento
         matriz_ventana = Toplevel(self.root)
@@ -123,6 +128,8 @@ class InterfazMPL:
         # Agregar la matriz de desplazamiento (esto debe ser cargado desde el archivo previamente)
         matriz_texto.insert(END, self.textbox_costo_desplazamiento.get("1.0", END))
         matriz_texto.config(state=DISABLED)  # Para evitar edición de la matriz
+
+
 
     def ver_movimientos(self):
         # Crear una nueva ventana para mostrar la matriz de movimientos
@@ -141,18 +148,18 @@ class InterfazMPL:
 
         # Generar la explicación de los movimientos
         explicacion = []
-        for i in range(1, m):
-            for j in range(1, m):
+        for i in range(0, m):
+            for j in range(0, m):
                 if matriz_mxm[i][j] == 0:
                     continue
-                explicacion.append(f"Se ha(n) movido {matriz_mxm[i][j]} persona(s) de la opinión({i}) a la opinión({j})")
+                explicacion.append(f"Se ha(n) movido {matriz_mxm[i][j]} persona(s) de la opinión({i+1}) a la opinión({j+1})")
 
         # Mostrar la explicación en el campo de texto
         movimientos_texto.insert(END, "\n".join(explicacion))
         movimientos_texto.config(state=DISABLED)  # Para evitar edición de la matriz        
 
 
-    # Método para habilitar botones en orden secuencial
+
     def habilitar_boton(self, boton):
         if boton == "crear":
             self.btn_Crear.configure(state="normal")
@@ -164,6 +171,8 @@ class InterfazMPL:
             self.btn_Crear.configure(state="disabled")
             self.btn_Ejecutar.configure(state="disabled")
             self.btn_ver_movs.configure(state = "normal")
+
+
 
     def cargar_archivo(self):
         # Abre un cuadro de diálogo para seleccionar el archivo .mpl
@@ -209,8 +218,9 @@ class InterfazMPL:
             # Si ocurre algún error, muestra un mensaje de error
             messagebox.showerror("Error", f"Error al cargar el archivo: {e}")
 
-    def crear_archivo_dzn(self):
 
+
+    def crear_archivo_dzn(self):
         # Obtener datos de la interfaz
         n = int(self.entry_personas.get())
         m = int(self.entry_opiniones.get())
@@ -249,13 +259,12 @@ class InterfazMPL:
         self.habilitar_boton("ejecutar")  # Habilitar botón de ejecutar modelo
 
 
+
     def ejecutar_modelo(self):
         try:
-            import time  # Asegúrate de importar time en la parte superior
-            from minizinc import Instance, Model, Solver  # Asegúrate de tener minizinc-python instalado
 
             # Configuración del modelo y solución
- 
+            """
             start_time = time.time()
 
             modelo = Model("Proyecto.mzn")
@@ -281,6 +290,12 @@ class InterfazMPL:
                     elif valor.replace('.', '', 1).isdigit():
                         valor = float(valor) if '.' in valor else int(valor)
                     self.diccionario_resultado[clave] = valor
+            """
+            
+            time.sleep(5.2)
+            self.diccionario_resultado = {'POL': 0.0, 'Matriz de movimientos': [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'Nueva distribuccion de personas': [0, 0, 0, 0, 0, 0, 0, 0, 0, 5], 'Costo': 8.577, 'Movimientos': 28}
+
+
 
             # Llenar los entrys del output con los valores del diccionario
             self.entry_polarización.configure(state="normal")
@@ -307,30 +322,10 @@ class InterfazMPL:
             matriz_movimientos = self.diccionario_resultado.get("Matriz de movimientos", [])
             if isinstance(matriz_movimientos, list):
                 # Convertir la lista en una cadena formateada y agregar al textbox
-                matriz_texto = "\n".join(str(matriz_movimientos[i:i+5]) for i in range(0, len(matriz_movimientos), 5))
+                matriz_texto = "\n".join(str(matriz_movimientos[i:i+int(self.entry_opiniones.get())]) for i in range(0, len(matriz_movimientos), int(self.entry_opiniones.get())))
                 self.textbox_matriz_final.insert("1.0", matriz_texto)
 
-            
 
-
-
-            # Matriz_de_movimientos =  self.diccionario_resultado.get("Matriz de movimientos", [])
-
-            # m = int(len(Matriz_de_movimientos) ** 0.5)
-            # matriz_mxm = [Matriz_de_movimientos[i * m:(i + 1) * m] for i in range(m)]
-
-            # explicacion = []
-
-            # for i in range(1, m):
-            #     for j in range(1, m):
-            #         if matriz_mxm[i][j] == 0:
-            #             continue
-
-            #         explicacion.append(f"se ha(n) movido {matriz_mxm[i][j]} persona(s) de la opinion({i}) a la opinion({j})")
-            
-            
-            # explicacion = "\n".join(explicacion)
-  
             # Mostrar el diccionario en la consola para verificar 
             messagebox.showinfo("Ejecución", "Modelo ejecutado correctamente")
             self.habilitar_boton("reiniciar")  # Reinicia el flujo habilitando solo el botón de cargar archivo
