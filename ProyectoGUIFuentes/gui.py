@@ -112,6 +112,7 @@ class InterfazMPL:
         self.label_matriz_final.place(x=315, y=300)
         self.textbox_matriz_final = ctk.CTkTextbox(master=self.root, width=300, height=150)
         self.textbox_matriz_final.place(x=450, y=300)
+        self.textbox_matriz_final.configure(state="disabled")
 
 
 
@@ -127,7 +128,7 @@ class InterfazMPL:
 
         # Agregar la matriz de desplazamiento (esto debe ser cargado desde el archivo previamente)
         matriz_texto.insert(END, self.textbox_costo_desplazamiento.get("1.0", END))
-        matriz_texto.config(state=DISABLED)  # Para evitar edición de la matriz
+        matriz_texto.configure(state=DISABLED)  # Para evitar edición de la matriz
 
 
 
@@ -135,7 +136,7 @@ class InterfazMPL:
         # Crear una nueva ventana para mostrar la matriz de movimientos
         movimientos_ventana = Toplevel(self.root)
         movimientos_ventana.title("Movimientos")
-        movimientos_ventana.geometry("1000x400")
+        movimientos_ventana.geometry("600x400")
 
         # Crear un campo de texto para mostrar la matriz en la nueva ventana
         movimientos_texto = Text(movimientos_ventana, wrap=WORD, width=120, height=20)
@@ -156,7 +157,7 @@ class InterfazMPL:
 
         # Mostrar la explicación en el campo de texto
         movimientos_texto.insert(END, "\n".join(explicacion))
-        movimientos_texto.config(state=DISABLED)  # Para evitar edición de la matriz        
+        movimientos_texto.configure(state=DISABLED)  # Para evitar edición de la matriz        
 
 
 
@@ -262,9 +263,7 @@ class InterfazMPL:
 
     def ejecutar_modelo(self):
         try:
-
             # Configuración del modelo y solución
-  
             start_time = time.time()
 
             modelo = Model("Proyecto.mzn")
@@ -290,11 +289,6 @@ class InterfazMPL:
                     elif valor.replace('.', '', 1).isdigit():
                         valor = float(valor) if '.' in valor else int(valor)
                     self.diccionario_resultado[clave] = valor
-          
-            
-            #time.sleep(5.2)
-            #self.diccionario_resultado = {'POL': 0.0, 'Matriz de movimientos': [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'Nueva distribuccion de personas': [0, 0, 0, 0, 0, 0, 0, 0, 0, 5], 'Costo': 8.577, 'Movimientos': 28}
-
 
 
             # Llenar los entrys del output con los valores del diccionario
@@ -321,9 +315,20 @@ class InterfazMPL:
             # Llenar el textbox de la matriz final
             matriz_movimientos = self.diccionario_resultado.get("Matriz de movimientos", [])
             if isinstance(matriz_movimientos, list):
+            # Limpiar el textbox antes de insertar los nuevos datos
+                self.textbox_matriz_final.configure(state="normal")  # Habilitar temporalmente para insertar los datos
+                self.textbox_matriz_final.delete("1.0", END)
+                
                 # Convertir la lista en una cadena formateada y agregar al textbox
-                matriz_texto = "\n".join(str(matriz_movimientos[i:i+int(self.entry_opiniones.get())]) for i in range(0, len(matriz_movimientos), int(self.entry_opiniones.get())))
+                matriz_texto = "\n".join(
+                    str(matriz_movimientos[i:i + int(self.entry_opiniones.get())]) 
+                    for i in range(0, len(matriz_movimientos), int(self.entry_opiniones.get()))
+                )
                 self.textbox_matriz_final.insert("1.0", matriz_texto)
+                
+                # Deshabilitar nuevamente para evitar edición
+                self.textbox_matriz_final.configure(state="disabled")
+
 
 
             # Mostrar el diccionario en la consola para verificar 
